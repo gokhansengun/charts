@@ -344,6 +344,13 @@ Init container definition to wait external DNS names.
       while ! (getent ahosts "{{ include "mongodb.initialPrimaryHost" . }}" | grep STREAM); do
         sleep 10
       done
+  env:
+    - name: MY_POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: K8S_SERVICE_NAME
+      value: "{{ include "mongodb.service.nameOverride" . }}"
   {{- if .Values.externalAccess.dnsCheck.resources }}
   resources: {{- toYaml .Values.externalAccess.dnsCheck.resources | nindent 12 }}
   {{- else if ne .Values.externalAccess.dnsCheck.resourcesPreset "none" }}
